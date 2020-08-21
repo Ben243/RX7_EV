@@ -46,7 +46,7 @@ GPIO INITIALIZATION
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Pi power button
 GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Ignition 
-GPIO.setup(4 GPIO.IN, pull_up_down=GPIO.PUD_UP) # ac switch
+GPIO.setup(4, GPIO.IN, pull_up_down=GPIO.PUD_UP) # ac switch
 GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_UP) # ac over pressure switch
 GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_UP) # dimmer switch
 
