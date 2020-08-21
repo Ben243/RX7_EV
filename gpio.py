@@ -69,7 +69,7 @@ fan_pwm = GPIO.PWM(19, 1000) # fan pwm initialized at 500Hz
 fan_pwm.start(0)
 
 # callback functions
-def shutdown_seq(channel) # does the shut down
+def shutdown_seq(channel): # does the shut down
     print("shutting down...")
     subprocess.call(['shutdown', '-h', 'now'], shell=False)
 
