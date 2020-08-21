@@ -73,7 +73,7 @@ def shutdown_seq(channel): # does the shut down
     print("shutting down...")
     subprocess.call(['shutdown', '-h', 'now'], shell=False)
 
-def charge(channel) # turns on pumps and charger
+def charge(channel): # turns on pumps and charger
     print('charging...')
     GPIO.output(21, 1) # charger on
     GPIO.output(26, 1) # charger on
@@ -158,7 +158,7 @@ def readSerial(ser):
 ac_duty_cycle = lambda perc: -0.8 * perc + 85 
 
 # main function, a big while loop
-def main()
+def main():
     while True:
         # fetch and update input values
         ign_switch = GPIO.input(2)
