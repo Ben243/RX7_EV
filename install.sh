@@ -2,10 +2,6 @@
 
 set -e
 
-echo "=> Installing gpio executer...\n"
-sudo cp gpio.py /usr/local/bin/
-sudo chmod +x /usr/local/bin/gpio.py
-
 echo "=> Starting gpio executer...\n"
 sudo cp execute_gpio.sh /etc/init.d/
 sudo chmod +x /etc/init.d/execute_gpio.sh
