@@ -322,10 +322,10 @@ def main():
             # 'accomp': 99, 
             # 'pump': 99, 
             # 'allerrors': 1,
-            }
+            })
         yield f"data:{json_data}\n\n"
-        time.sleep(.05)
-    )
+        sleep(.05)
+    
     
 @application.route('/')
 def index():
