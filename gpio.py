@@ -84,35 +84,35 @@ can0 = can.interface.Bus(channel = 'can0', bustype = 'socketcan_ctypes')# socket
 GPIO INITIALIZATION
 '''
 # inputs
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Pi power button
-GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Ignition
-GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_UP) # charger button
-GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_UP) # ac switch
-GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP) # ac over pressure switch
-GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP) # dimmer switch
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Pi power button
+# GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Ignition
+# GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_UP) # charger button
+# GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_UP) # ac switch
+# GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP) # ac over pressure switch
+# GPIO.setup(27, GPIO.IN, pull_up_down=GPIO.PUD_UP) # dimmer switch
 
-# outputs
-GPIO.setup(21, GPIO.OUT) # charger relay
-GPIO.setup(20, GPIO.OUT) # twelve volt dc-dc relay
-GPIO.setup(26, GPIO.OUT) # pump relay
-GPIO.setup(16, GPIO.OUT) # ac comp relay
+# # outputs
+# GPIO.setup(21, GPIO.OUT) # charger relay
+# GPIO.setup(20, GPIO.OUT) # twelve volt dc-dc relay
+# GPIO.setup(26, GPIO.OUT) # pump relay
+# GPIO.setup(16, GPIO.OUT) # ac comp relay
 
-#   CAN HAT GPIO
-GPIO.setup(4, GPIO.OUT) # not sure why it uses this pin, i reserved it anyways
-GPIO.output(4, 0)
+# #   CAN HAT GPIO
+# GPIO.setup(4, GPIO.OUT) # not sure why it uses this pin, i reserved it anyways
+# GPIO.output(4, 0)
 
-# pwm (software)
-ac_comp_pwm = GPIO.PWM(12, 200) # ac comp pwm initialized at 200Hz.
-ac_comp_pwm.start(85) # initialize ac compressor pwm at 85
-# Note: duty cycle range means 5% is max, and 85% is min
+# # pwm (software)
+# ac_comp_pwm = GPIO.PWM(12, 200) # ac comp pwm initialized at 200Hz.
+# ac_comp_pwm.start(85) # initialize ac compressor pwm at 85
+# # Note: duty cycle range means 5% is max, and 85% is min
 
-chiller_pwm = GPIO.PWM(13, 1000) # chiller pwm initialized at 500Hz
-chiller_pwm.start(0)
-cabin_pwm = GPIO.PWM(18, 1000) # cabin pwm initialized at 500Hz
-cabin_pwm.start(0)
-fan_pwm = GPIO.PWM(19, 1000) # fan pwm initialized at 500Hz
-fan_pwm.start(0)
+# chiller_pwm = GPIO.PWM(13, 1000) # chiller pwm initialized at 500Hz
+# chiller_pwm.start(0)
+# cabin_pwm = GPIO.PWM(18, 1000) # cabin pwm initialized at 500Hz
+# cabin_pwm.start(0)
+# fan_pwm = GPIO.PWM(19, 1000) # fan pwm initialized at 500Hz
+# fan_pwm.start(0)
 
 # callback functions
 def shutdown_seq(channel): # does the shut down
@@ -226,10 +226,10 @@ def main():
         # global fan_pwm
         
         # fetch and update input values
-        ign_switch = GPIO.input(2)
-        ac_switch = GPIO.input(4)
-        ac_over_pressure_switch = GPIO.input(14)
-        dimmer_switch = GPIO.input(15)
+        # ign_switch = GPIO.input(2)
+        # ac_switch = GPIO.input(4)
+        # ac_over_pressure_switch = GPIO.input(14)
+        # dimmer_switch = GPIO.input(15)
         
         usb0_data = readSerial(usb0) #from usb0
         cell_volts = np.array(usb0_data[0:191]) # update cellvolts
