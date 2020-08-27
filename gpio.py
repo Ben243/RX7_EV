@@ -195,35 +195,35 @@ ac_duty_cycle = lambda perc: -0.8 * perc + 85
 def main():
     while True:
         #global variable declaration
-        global ign_switch
-        global charger_switch
-        global ac_switch
-        global ac_over_pressure_switch
-        global dimmer_switch
+        # global ign_switch
+        # global charger_switch
+        # global ac_switch
+        # global ac_over_pressure_switch
+        # global dimmer_switch
         global speed
         global rpm
-        global cell_volts
-        global batt_temps
-        #global errmsg
-        global air_temp
-        global motor_inverter_temp
-        global motor_stator_temp
-        global high_pressure_refrig
-        global lo_pressure_refrig
-        global temp_refrig
-        global acOverPressureError
-        global battVoltError
-        global battTempError
-        global motorInverterTempError
-        global motorStatorT
-        global battTempDevError
-        global battVoltDevError
-        global serialReadError
-        global ArduinoError
-        global ac_comp_pwm
-        global chiller_pwm
-        global cabin_pwm
-        global fan_pwm
+        # global cell_volts
+        # global batt_temps
+        # #global errmsg
+        # global air_temp
+        # global motor_inverter_temp
+        # global motor_stator_temp
+        # global high_pressure_refrig
+        # global lo_pressure_refrig
+        # global temp_refrig
+        # global acOverPressureError
+        # global battVoltError
+        # global battTempError
+        # global motorInverterTempError
+        # global motorStatorT
+        # global battTempDevError
+        # global battVoltDevError
+        # global serialReadError
+        # global ArduinoError
+        # global ac_comp_pwm
+        # global chiller_pwm
+        # global cabin_pwm
+        # global fan_pwm
         
         # fetch and update input values
         ign_switch = GPIO.input(2)
@@ -249,47 +249,50 @@ def main():
         max_batt_temp_dev = max(np.abs(batt_temp_mean - batt_temps))
         
         # UPDATING ERRORS
-        acOverPressureError = (not ac_over_pressure_switch) # TODO ASK KEVIN WHAT THIS MEANS
-        battVoltError = np.any((cell_volts < 3.2)|(cell_volts > 4.19)) # bad voltages
-        battTempError = np.any(batt_temps > 45) # bad temps
-        motorInverterTempError = motor_inverter_temp > 80
-        motorStatorTempError = motor_stator_temp > 90
-        battVoltDevError = np.any((cell_volts < cell_mean - 0.02) | 
-                                    (cell_volts > cell_mean + 0.02))
-        battTempDevError = np.any((batt_temps < batt_temp_mean - 5) | 
-                                    (batt_temps > batt_temp_mean + 5))
-        ArduinoError = usb0_data[209] # gets arduino errors as boolean
+        # acOverPressureError = (not ac_over_pressure_switch) # TODO ASK KEVIN WHAT THIS MEANS
+        # battVoltError = np.any((cell_volts < 3.2)|(cell_volts > 4.19)) # bad voltages
+        # battTempError = np.any(batt_temps > 45) # bad temps
+        # motorInverterTempError = motor_inverter_temp > 80
+        # motorStatorTempError = motor_stator_temp > 90
+        # battVoltDevError = np.any((cell_volts < cell_mean - 0.02) | 
+        #                             (cell_volts > cell_mean + 0.02))
+        # battTempDevError = np.any((batt_temps < batt_temp_mean - 5) | 
+        #                             (batt_temps > batt_temp_mean + 5))
+        # ArduinoError = usb0_data[209] # gets arduino errors as boolean
         # outputs/switches
 
-        if ign_switch: # if ignition on
-            GPIO.output(20, 1) # 12v charger on
-            GPIO.output(26, 1) # pump on
+        # if ign_switch: # if ignition on
+        #     GPIO.output(20, 1) # 12v charger on
+        #     GPIO.output(26, 1) # pump on
             
-        if charger_switch: # checks if charger switch is on (manually toggled)
-            GPIO.output(21,1) # charger on
-            GPIO.output(26,1) # pump on
+        # if charger_switch: # checks if charger switch is on (manually toggled)
+        #     GPIO.output(21,1) # charger on
+        #     GPIO.output(26,1) # pump on
             
-            if check_errors(): # if any error switch off TODO check if this is actually safe LOL
-                GPIO.output(21, 0) # charger off
-                GPIO.output(20, 0) # twelve volt charger off
-                GPIO.output(26, 0) # pump off
-                GPIO.output(16, 0) # ac comp off
-                continue           # skips rest of while loop
+        #     if check_errors(): # if any error switch off TODO check if this is actually safe LOL
+        #         GPIO.output(21, 0) # charger off
+        #         GPIO.output(20, 0) # twelve volt charger off
+        #         GPIO.output(26, 0) # pump off
+        #         GPIO.output(16, 0) # ac comp off
+        #         continue           # skips rest of while loop
             
-        if 23 <= batt_temp_mean <= 30: # battery fan logic
-            fan_pwm.ChangeDutyCycle((batt_temp_mean - 23) / 0.16)
-        elif 30 < batt_temp_mean < 40:
-            fan_pwm.ChangeDutyCycle(75)
-            ac_comp_pwm.ChangeDutyCycle(ac_duty_cycle(50))
-        elif 40 < batt_temp_mean:
-            fan_pwm.ChangeDutyCycle(100)
-            ac_comp_pwm.ChangeDutyCycle(ac_duty_cycle(100)) 
-            print('batt temps above 40')
+        # if 23 <= batt_temp_mean <= 30: # battery fan logic
+        #     fan_pwm.ChangeDutyCycle((batt_temp_mean - 23) / 0.16)
+        # elif 30 < batt_temp_mean < 40:
+        #     fan_pwm.ChangeDutyCycle(75)
+        #     ac_comp_pwm.ChangeDutyCycle(ac_duty_cycle(50))
+        # elif 40 < batt_temp_mean:
+        #     fan_pwm.ChangeDutyCycle(100)
+        #     ac_comp_pwm.ChangeDutyCycle(ac_duty_cycle(100)) 
+        #     print('batt temps above 40')
             
-        if ac_switch: # check ac switch on
-            ac_comp_pwm.ChangeDutyCycle(ac_duty_cycle(75)) #TODO check if this is the same ac comp for batts
-            cabin_pwm.ChangeDutyCycle(75)
-        #TODO figure out json format string
+        # if ac_switch: # check ac switch on
+        #     ac_comp_pwm.ChangeDutyCycle(ac_duty_cycle(75)) #TODO check if this is the same ac comp for batts
+        #     cabin_pwm.ChangeDutyCycle(75)
+        # #TODO figure out json format string
+        
+        speed = (speed + 1) % 100
+        rpm = (rpm+0.25) % 8
         # speed rpm ignition charging 12v avgcellvolts avgbatttemps battvolt airtemp accomp pump allerrors
         json_data = json.dumps(
             # {'speed': speed,
@@ -308,17 +311,17 @@ def main():
             # }
             {'speed': speed,
             'rpm': rpm,
-            'ignition': ign_switch, 
-            'charging': charger_switch, 
-            'twelvev': GPIO.input(20),
-            'avgcellvolts': cell_mean, 
-            'avgbatttemps': batt_temp_mean, 
-            'cellvoltdevmax': max_cellv_dev,
-            'batttempdevmax': max_batt_temp_dev,
-            'airtemp': air_temp,
-            # 'accomp': , 
-            # 'pump': , 
-            # 'allerrors': ,
+            # 'ignition': ign_switch, 
+            # 'charging': charger_switch, 
+            # 'twelvev': GPIO.input(20),
+            # 'avgcellvolts': cell_mean, 
+            # 'avgbatttemps': batt_temp_mean, 
+            # 'cellvoltdevmax': max_cellv_dev,
+            # 'batttempdevmax': max_batt_temp_dev,
+            # 'airtemp': air_temp,
+            # 'accomp': 99, 
+            # 'pump': 99, 
+            # 'allerrors': 1,
             }
         yield f"data:{json_data}\n\n"
         time.sleep(.05)
