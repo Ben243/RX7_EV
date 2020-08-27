@@ -93,7 +93,8 @@
     <script>
     var source = new EventSource('/data');
     source.onmessage = function(event){
-        document.body.innerHTML = "speed: " + event.data.speed + " " + event.data.rpm + '<br>';
+        var e = JSON.parse(event)
+        document.body.innerHTML = "speed: " + e.data.speed + ", rpm:  " + e.data.rpm + '<br>';
     }
     </script>
 </html>
