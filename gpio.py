@@ -292,10 +292,24 @@ def main():
         #TODO figure out json format string
         # speed rpm ignition charging 12v avgcellvolts avgbatttemps battvolt airtemp accomp pump allerrors
         json_data = json.dumps(
+            # {'speed': speed,
+            # 'rpm': rpm,
+            # 'ignition': ign_switch, 
+            # 'charging': charger_switch, 
+            # 'twelvev': GPIO.input(20),
+            # 'avgcellvolts': cell_mean, 
+            # 'avgbatttemps': batt_temp_mean, 
+            # 'cellvoltdevmax': max_cellv_dev,
+            # 'batttempdevmax': max_batt_temp_dev,
+            # 'airtemp': air_temp,
+            # # 'accomp': , 
+            # # 'pump': , 
+            # # 'allerrors': ,
+            # }
             {'speed': speed,
             'rpm': rpm,
             'ignition': ign_switch, 
-            'charging' charger_switch, 
+            'charging': charger_switch, 
             'twelvev': GPIO.input(20),
             'avgcellvolts': cell_mean, 
             'avgbatttemps': batt_temp_mean, 

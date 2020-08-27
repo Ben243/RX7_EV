@@ -16,11 +16,11 @@
 case "$1" in
   start)
     echo "Starting gpio.py"
-    /usr/local/bin/gpio.py &
+    /home/pi/RX7_EV/gpio.py &
     ;;
   stop)
     echo "Stopping gpio.py"
-    pkill -f /usr/local/bin/gpio.py
+    pkill -f /home/pi/RX7_EV/gpio.py
     ;;
   *)
     echo "Usage: /etc/init.d/execute_gpio.sh {start|stop}"
