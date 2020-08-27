@@ -84,7 +84,7 @@ can0 = can.interface.Bus(channel = 'can0', bustype = 'socketcan_ctypes')# socket
 GPIO INITIALIZATION
 '''
 # inputs
-# GPIO.setmode(GPIO.BCM)
+GPIO.setmode(GPIO.BCM)
 # GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Pi power button
 # GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Ignition
 # GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_UP) # charger button
@@ -136,8 +136,8 @@ def check_errors(): # prints any errors and returns whether any are true
     global acOverPressureError
     global battVoltError
     global battTempError
-    global motorInverterTempEr
-    global motorStatorT
+    global motorInverterTempError
+    global motorStatorTempError
     global battTempDevError
     global battVoltDevError
     global serialReadError
@@ -171,6 +171,7 @@ def readSerial(ser):
         ser.close()
         ser.open()
     except SerialException:
+        global serialReadError
         serialReadError = True
         print('serial device not found/configurable')
         return
@@ -185,6 +186,7 @@ def readCan(can_):
         msg = can_.recv(0)
     except CanError:
         print('Can not read')
+    return msg
 
 # output functions
 ac_duty_cycle = lambda perc: -0.8 * perc + 85 
@@ -314,11 +316,11 @@ def main():
             # 'ignition': ign_switch, 
             # 'charging': charger_switch, 
             # 'twelvev': GPIO.input(20),
-            # 'avgcellvolts': cell_mean, 
-            # 'avgbatttemps': batt_temp_mean, 
-            # 'cellvoltdevmax': max_cellv_dev,
-            # 'batttempdevmax': max_batt_temp_dev,
-            # 'airtemp': air_temp,
+            'avgcellvolts': cell_mean, 
+            'avgbatttemps': batt_temp_mean, 
+            'cellvoltdevmax': max_cellv_dev,
+            'batttempdevmax': max_batt_temp_dev,
+            'airtemp': air_temp,
             # 'accomp': 99, 
             # 'pump': 99, 
             # 'allerrors': 1,
