@@ -46,7 +46,7 @@ acOverPressureError = False
 battVoltError = False
 battTempError = False
 motorInverterTempError = False
-motorStatorTempError
+motorStatorTempError = False
 battTempDevError = False
 battVoltDevError = False
 serialReadError = False
