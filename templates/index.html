@@ -93,7 +93,7 @@
     <script>
     var source = new EventSource('/data');
     source.onmessage = function(event){
-        document.body.innerHTML = e.data + '<br>';
+        document.body.innerHTML = "speed: " + event.data.speed + " " + event.data.rpm + '<br>';
     }
     </script>
 </html>

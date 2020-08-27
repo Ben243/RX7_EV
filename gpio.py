@@ -331,13 +331,13 @@ def main():
         sleep(.05)
     
     
-@application.route('/')
-def index():
-    return render_template('index.html')
+# @application.route('/')
+# def index():
+#     return render_template('index.html')
 
-@application.route('/data')
-def data():
-    return Response(main(), mimetype='text/event-stream')
+# @application.route('/data')
+# def data():
+#     return Response(main(), mimetype='text/event-stream')
 
 if __name__ == "__main__":
     application.run(debug=True, threaded=True)
