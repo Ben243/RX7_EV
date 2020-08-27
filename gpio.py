@@ -85,7 +85,7 @@ GPIO INITIALIZATION
 '''
 # inputs
 GPIO.setmode(GPIO.BCM)
-# GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Pi power button
+GPIO.setup(3, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Pi power button
 # GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP) # Ignition
 # GPIO.setup(14, GPIO.IN, pull_up_down=GPIO.PUD_UP) # charger button
 # GPIO.setup(15, GPIO.IN, pull_up_down=GPIO.PUD_UP) # ac switch
@@ -129,7 +129,7 @@ def toggle_charge(channel): # pressing the charger switch on or off
 #if falling voltage is detected on pin 3, shut down pi
 GPIO.add_event_detect(3, GPIO.FALLING, callback=shutdown_seq)
 # #if falling voltage is detected on pin 14, charge/turn off charging
-GPIO.add_event_detect(14, GPIO.FALLING, callback=toggle_charge)
+# GPIO.add_event_detect(14, GPIO.FALLING, callback=toggle_charge)
 
 # error calls
 def check_errors(): # prints any errors and returns whether any are true
