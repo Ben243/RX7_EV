@@ -19,6 +19,8 @@ from datetime import datetime
 
 from flask import Flask, Response, render_template
 
+application = Flask(__name__)
+
 ''' variable name declarations '''
 # All variables are initialized here
 ign_switch = False
