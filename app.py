@@ -92,9 +92,9 @@ def data():
         while True:
             usb0_data = readSerial(usb0) #from usb0
             # input format is speed rpm ignition charging ac_on ac_pressure dimmer cellvolt_avg batttemp_avg 
-            cell_volts = np.array(usb0_data[0:191]) # update cellvolts
-            batt_temps = np.array(usb0_data[192:208]) # update batttemps
-            air_temp = usb0_data[210] #check airtemp
+            # cell_volts = np.array(usb0_data[0:191]) # update cellvolts
+            # batt_temps = np.array(usb0_data[192:208]) # update batttemps
+            # air_temp = usb0_data[210] #check airtemp
             
             
             # cell_mean = np.mean(cell_volts)
@@ -120,9 +120,7 @@ def data():
                 # 'accomp': 99, 
                 # 'pump': 99, 
                 # 'allerrors': 1,
-                }
-            )
+                })
             yield f"data:{json_data}\n\n"
-            sleep(0.1) # update speed
-        
-        return Response(generate_values(), mimetype='text/event-stream')
+            sleep(0.1) # update speed   
+    return Response(generate_values(), mimetype='text/event-stream')
