@@ -125,4 +125,4 @@ def data():
             yield f"data:{json_data}\n\n"
             sleep(0.1) # update speed
         
-    return Response(generate_values(), mimetype='text/event-stream')
+        return Response(generate_values(), mimetype='text/event-stream')
