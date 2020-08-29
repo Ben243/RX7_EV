@@ -89,12 +89,12 @@
     //     }
     // });
 </script>
-</body>
-    <script>
+<script>
     var source = new EventSource('/data');
     source.onmessage = function (event) {
-        const data = JSON.parse(event);
+        var data = JSON.parse(event.data);
         document.body.innerHTML = "speed: " + data.speed + ", rpm:  " + data.rpm + '<br>';
     }
-    </script>
-</html>
+</script>
+</body>
+</html>  r

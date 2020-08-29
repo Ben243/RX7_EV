@@ -14,7 +14,7 @@ from datetime import datetime
 
 from flask import Flask, Response, render_template
 
-application = Flask(__name__) # initialize flask
+app = Flask(__name__) # initialize flask
 
 '''global variables'''
 speed = 999
@@ -61,11 +61,11 @@ def readSerial(ser):
     return ln
 
 #flask stuff
-@application.route('/')
+@app.route('/')
 def index():
     return render_template('index.html')
 
-@application.route('/data')
+@app.route('/data')
 def data():
     def generate_values():
         #global variable declaration
@@ -122,9 +122,9 @@ def data():
                 # 'allerrors': 1,
                 })
             yield f"data:{json_data}\n\n"
-            print(speed)
+            # print(speed)
             sleep(0.5) # update speed   
     return Response(generate_values(), mimetype='text/event-stream')
 
 if __name__ == '__main__':
-    application.run(debug=True, threaded=True)
+    app.run(debug=True, threaded=True)
