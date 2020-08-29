@@ -5,7 +5,7 @@
     <title>Creating Real-Time Charts with Flask</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
-</head>
+<!-- </head> -->
 <body>
 <div class="container">
     <div class="row">
@@ -88,13 +88,13 @@
     //         lineChart.update();
     //     }
     // });
-</script>
-<script>
     var source = new EventSource('/data');
     source.onmessage = function (event) {
         var data = JSON.parse(event.data);
-        document.body.innerHTML = "speed: " + data.speed + ", rpm:  " + data.rpm + '<br>';
+        var out = document.getElementById('out');
+        out.innerHTML = "speed: " + data.speed + ", rpm:  " + data.rpm + '<br>';
     }
 </script>
+<ul id="out"></ul>
 </body>
 </html> 
