@@ -122,7 +122,8 @@ def data():
                 # 'allerrors': 1,
                 })
             yield f"data:{json_data}\n\n"
-            sleep(0.1) # update speed   
+            print(speed)
+            sleep(0.5) # update speed   
     return Response(generate_values(), mimetype='text/event-stream')
 
 if __name__ == '__main__':
