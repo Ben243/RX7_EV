@@ -126,6 +126,6 @@ def index():
 @app.route('/data')
 def data():  
     return Response(generate_values(), mimetype='text/event-stream')
-
+    
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)
