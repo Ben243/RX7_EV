@@ -1,0 +1,266 @@
+var tick = {};
+tick.plot0 = 0
+window.feed = function(callback) {
+    tick.plot0 = (tick.plot0 + 1) % 180
+    callback(JSON.stringify(tick));
+    };
+    
+    var myConfig = {
+    theme: "dark",
+    type: "gauge",
+    globals: {
+        fontSize: 25
+    },
+    plotarea: {
+        marginTop: 80
+    },
+    plot: {
+        size: '100%',
+        valueBox: {
+          placement: 'center',
+          text: '%v', //default
+          "font-color": "white",
+          fontSize: 35,
+          rules: []
+        }
+    },
+    tooltip: {
+        borderRadius: 5
+    },
+    
+    scaleR: {
+        aperture: 275,
+        values: "0:180:20",
+        // markers: [{ //used for red portion of rpm
+        //   type: "area",
+        //   range: [160,180],
+        //   'offset-start':0.82,
+        //   'offset-end':0.1,
+        //   'background-color': "red",
+        //   alpha:0.7,
+        // }],
+        center: {
+          alpha: .75,
+          backgroundColor: 'black',
+          borderColor: 'white',
+          borderWidth: 2,
+          size: 40,
+          type: 'circle',
+          x: '50%',
+          visible: true,
+          y: '50%'
+        },
+        tick: {
+          alpha: 1,
+          lineColor: 'white',
+          lineStyle: 'solid',
+          lineWidth: 3,
+          placement: 'inner',
+          size: 35,
+          visible: true,
+          rules: [{
+              rule: '%i == 80',
+              lineColor: "red"
+          }]
+        },
+        minorTicks: 3,
+        minorTick: {
+          alpha: 1,
+          lineColor: 'white',
+          lineStyle: 'solid',
+          lineWidth: 2,
+          placement: 'inner',
+          size: 20,
+          visible: true
+        },
+        minorGuide: {visible: false},
+        item: {
+          'font-size':30,
+          'padding': 15,
+          offsetR: -145,
+          rules: [{
+              rule: '%i >= 0',
+              offsetX: -10,
+              offsetY: -6
+          // },
+          // {
+          //     rule: '%i >= 20 && %i < 80',
+          //     offsetX: -14,
+          //     offsetY: -4
+          // },
+          // {
+          //     rule: '%i < 20',
+          //     offsetX: -15,
+          //     offsetY: 17
+          }]
+        },
+        labels: ['0','20', '40', '60', '80', '100', '120', '140', '160', '180'],
+        ring: {
+          size: 15,
+          // rules: [{
+          //   rule: '%v >= 160 && %v < 180',
+          //   backgroundColor: '#E53935',
+          //   }]
+          },
+
+    },
+    refresh: {
+        type: "feed",
+        transport: "js",
+        url: "feed()",
+        interval: 100,
+        resetTimeout: 10000
+    },
+    series: [{
+        values: [0], // starting value
+        backgroundColor: 'red',
+        indicator: [-3, -3, -1, -100,-.3],
+        animation: {
+        effect: 2, 
+        method: 1,
+        sequence: 4,
+        speed: 3000
+        },
+    }]
+    };
+    
+    zingchart.render({
+    id: 'myChart',
+    data: myConfig,
+    height: 600,
+    width: '100%'
+    });
+
+//rpm
+var tick = {};
+tick.plot0 = 0
+window.feed = function(callback) {
+    tick.plot0 = (tick.plot0 + .1).toFixed(1) % 9
+    callback(JSON.stringify(tick));
+    };
+    
+var rpmConfig = {
+theme: "dark",
+type: "gauge",
+globals: {
+    fontSize: 25
+},
+plotarea: {
+    marginTop: 80
+},
+plot: {
+    size: '100%',
+    valueBox: {
+      placement: 'center',
+      text: '%v', //default
+      "font-color": "white",
+      fontSize: 35,
+      rules: []
+    }
+},
+tooltip: {
+    borderRadius: 5
+},
+
+scaleR: {
+    aperture: 275,
+    values: "0:9",
+    // markers: [{ //used for red portion of rpm
+    //   type: "area",
+    //   range: [160,180],
+    //   'offset-start':0.82,
+    //   'offset-end':0.1,
+    //   'background-color': "red",
+    //   alpha:0.7,
+    // }],
+    center: {
+      alpha: .75,
+      backgroundColor: 'black',
+      borderColor: 'white',
+      borderWidth: 2,
+      size: 40,
+      type: 'circle',
+      x: '50%',
+      visible: true,
+      y: '50%'
+    },
+    tick: {
+      alpha: 1,
+      lineColor: 'white',
+      lineStyle: 'solid',
+      lineWidth: 3,
+      placement: 'inner',
+      size: 35,
+      visible: true,
+      rules: [{
+          rule: '%i == 80',
+          lineColor: "red"
+      }]
+    },
+    minorTicks: 3,
+    minorTick: {
+      alpha: 1,
+      lineColor: 'white',
+      lineStyle: 'solid',
+      lineWidth: 2,
+      placement: 'inner',
+      size: 20,
+      visible: true
+    },
+    minorGuide: {visible: false},
+    item: {
+      'font-size':40,
+      'padding': 10,
+      offsetR: -130,
+      rules: [{
+          // rule: '%i >= 0',
+          // offsetX: -10,
+          // offsetY: -6
+      // },
+      // {
+      //     rule: '%i >= 20 && %i < 80',
+      //     offsetX: -14,
+      //     offsetY: -4
+      // },
+      // {
+      //     rule: '%i < 20',
+      //     offsetX: -15,
+      //     offsetY: 17
+      }]
+    },
+    labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    ring: {
+      size: 15,
+      rules: [{
+        rule: '%v >= 8 && %v < 9',
+        backgroundColor: '#E53935',
+        }]
+      },
+
+},
+refresh: {
+    type: "feed",
+    transport: "js",
+    url: "feed()",
+    interval: 100,
+    resetTimeout: 10000
+},
+series: [{
+    values: [0], // starting value
+    backgroundColor: 'red',
+    indicator: [-3, -3, -1, -100,-.3],
+    animation: {
+    effect: 2, 
+    method: 1,
+    sequence: 4,
+    speed: 3000
+    },
+}]
+};
+
+zingchart.render({
+id: 'myChart',
+data: rpmConfig,
+height: 600,
+width: '100%'
+});

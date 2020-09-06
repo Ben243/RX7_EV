@@ -17,6 +17,10 @@ from flask import Flask, Response, render_template
 app = Flask(__name__) # initialize flask
 
 '''global variables'''
+ign_switch = 1
+charger_switch = 1
+ac_switch = 1
+dimmer_switch = 0
 speed = 99
 rpm = 99
 cell_volts = np.zeros(192) #[0 for x in range(192)] # 192, or 96*2 individual values
@@ -62,9 +66,9 @@ def readSerial(ser):
 
 def generate_values():
     #global variable declaration
-    # global ign_switch
-    # global charger_switch
-    # global ac_switch
+    global ign_switch
+    global charger_switch
+    global ac_switch
     # global ac_over_pressure_switch
     # global dimmer_switch
     global speed
@@ -86,14 +90,16 @@ def generate_values():
         # usb0_data = readSerial(usb0) #from usb0
         # input format is speed rpm ignition charging ac_on ac_pressure dimmer cellvolt_avg batttemp_avg 
         # cell_volts = np.array(usb0_data[0:191]) # update cellvolts
+        cell_volts = np.random.normal(loc=69, size=191)
         # batt_temps = np.array(usb0_data[192:208]) # update batttemps
+        batt_temps = np.random.normal(loc=30, size=16)
         # air_temp = usb0_data[210] #check airtemp
         
         
-        # cell_mean = np.mean(cell_volts)
-        # batt_temp_mean = np.mean(batt_temps)
-        # max_cellv_dev =  max(np.abs(cell_mean - cell_volts))
-        # max_batt_temp_dev = max(np.abs(batt_temp_mean - batt_temps))
+        cell_mean = np.mean(cell_volts)
+        batt_temp_mean = np.mean(batt_temps)
+        max_cellv_dev =  max(np.abs(cell_mean - cell_volts))
+        max_batt_temp_dev = max(np.abs(batt_temp_mean - batt_temps))
         
         # dummy values section
         speed = (speed + 1) % 100
@@ -103,16 +109,16 @@ def generate_values():
             {'speed': speed,
             'rpm': rpm,
             # 'ignition': ign_switch, 
-            # 'charging': charger_switch, 
-            # 'twelvev': GPIO.input(20),
-            # 'avgcellvolts': cell_mean, 
-            # 'avgbatttemps': batt_temp_mean, 
-            # 'cellvoltdevmax': max_cellv_dev,
-            # 'batttempdevmax': max_batt_temp_dev,
+            'charging': charger_switch, 
+            # 'twelvev': 1, #gpio.input(12)
+            'avgcellvolts': cell_mean, 
+            'avgbatttemps': batt_temp_mean, 
+            'cellvoltdevmax': max_cellv_dev,
+            'batttempdevmax': max_batt_temp_dev,
             'airtemp': air_temp,
-            # 'accomp': 99, 
-            # 'pump': 99, 
-            # 'allerrors': 1,
+            'accomp': 99, 
+            'pump': 99, 
+            # 'allerrors': 0,
             })
         yield f"data:{json_data}\n\n"
         # print(speed)
