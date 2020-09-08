@@ -11,13 +11,13 @@
         import './zingchart/modules-es6/zingchart-pareto.min.js';
     </script> -->
     <script src="static/zingchart.min.js"></script> 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
 </head>
 <body style="background:black; color:white">
 <div>
     <div style="width: 50%; margin: 20; float:left;" id="Speedchart"></div>
     <!-- <div id="Rpmchart"></div> -->
-    <div style="float:left; margin:20;" id="RawData"> </div>
+    <div style="float:left; margin:20; text-align:left;" id="RawData"> </div>
 </div>
     
 <script>
@@ -26,7 +26,7 @@
         theme: "dark", "background-color":'black',
         type: "gauge",
         globals: {fontSize: 25},
-        scale: {'size-factor':0.7},'scale-2': {'size-factor':1},
+        scale: {},'scale-2': {'size-factor':1},
         plot: {
           size: '100%',
           valueBox: {
@@ -136,7 +136,7 @@
             scales:"scale-2, scale-r-2",
             animation: {
             effect: 2, 
-            method: 0,
+            method: 5,
             sequence: 0,  
             speed: 500
             },

@@ -81,7 +81,7 @@ def generate_values():
     # global ac_over_pressure_switch
     # global dimmer_switch
     global speed
-    global rpm
+    # global rpm
     global cell_volts
     global batt_temps
     # #global errmsg
@@ -98,23 +98,27 @@ def generate_values():
 
     counter = 0
     while True:
+        # dummy values section, comment out before posting
+        speed = np.round((speed + 0.1) % 180, 1)
+        # rpm = (rpm+0.25) % 8
+        cell_volts = np.random.normal(loc=69, size=191) #dummy
+        batt_temps = np.random.normal(loc=30, size=16) #dummy
+
+        # true input section
         # usb0_data = readSerial(usb0) #from usb0
         # input format is speed rpm ignition charging ac_on ac_pressure dimmer cellvolt_avg batttemp_avg 
         # cell_volts = np.array(usb0_data[0:191]) # update cellvolts
-        cell_volts = np.random.normal(loc=69, size=191)
         # batt_temps = np.array(usb0_data[192:208]) # update batttemps
-        batt_temps = np.random.normal(loc=30, size=16)
         # air_temp = usb0_data[210] #check airtemp
         
-        
+        # calculations
+
         cell_mean = np.round(np.mean(cell_volts), 2)
         batt_temp_mean = np.round(np.mean(batt_temps), 2)
         max_cellv_dev =  np.round(max(np.abs(cell_mean - cell_volts)), 2)
         max_batt_temp_dev = np.round(max(np.abs(batt_temp_mean - batt_temps)), 2)
+
         
-        # dummy values section
-        speed = np.round((speed + 0.1) % 180, 1) 
-        # rpm = (rpm+0.25) % 8
         if counter == 0:
             json_data = json.dumps(
                 {'speed': speed,
@@ -136,7 +140,7 @@ def generate_values():
             yield f"data:{json_data}\n\n"
         # print(speed)
         counter = (counter + 1) % 10
-        sleep(0.013) # update speed 
+        sleep(0.0135) # update speed 
 
 #flask stuff
 @app.route('/')
