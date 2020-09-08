@@ -1,7 +1,10 @@
+#!/usr/bin/env python
+
 import RPi.GPIO as GPIO
 from gpiozero import LED, Button
 import subprocess
 import os, sys
+import psutil
 import threading
 import serial
 import can
@@ -64,7 +67,13 @@ def readSerial(ser):
     ln = ser.readline().split()
     return ln
 
+'''helper functions'''
+def pi_temp():
+    return (float) (os.popen("vcgencmd measure_temp").readline()[5:9])
+
+
 def generate_values():
+    '''main loop logic'''
     #global variable declaration
     global ign_switch
     global charger_switch
@@ -86,6 +95,8 @@ def generate_values():
     # global chiller_pwm
     # global cabin_pwm
     # global fan_pwm
+
+    counter = 0
     while True:
         # usb0_data = readSerial(usb0) #from usb0
         # input format is speed rpm ignition charging ac_on ac_pressure dimmer cellvolt_avg batttemp_avg 
@@ -96,33 +107,36 @@ def generate_values():
         # air_temp = usb0_data[210] #check airtemp
         
         
-        cell_mean = np.mean(cell_volts)
-        batt_temp_mean = np.mean(batt_temps)
-        max_cellv_dev =  max(np.abs(cell_mean - cell_volts))
-        max_batt_temp_dev = max(np.abs(batt_temp_mean - batt_temps))
+        cell_mean = np.round(np.mean(cell_volts), 2)
+        batt_temp_mean = np.round(np.mean(batt_temps), 2)
+        max_cellv_dev =  np.round(max(np.abs(cell_mean - cell_volts)), 2)
+        max_batt_temp_dev = np.round(max(np.abs(batt_temp_mean - batt_temps)), 2)
         
         # dummy values section
-        speed = (speed + 1) % 100
-        rpm = (rpm+0.25) % 8
-
-        json_data = json.dumps(
-            {'speed': speed,
-            'rpm': rpm,
-            # 'ignition': ign_switch, 
-            'charging': charger_switch, 
-            # 'twelvev': 1, #gpio.input(12)
-            'avgcellvolts': cell_mean, 
-            'avgbatttemps': batt_temp_mean, 
-            'cellvoltdevmax': max_cellv_dev,
-            'batttempdevmax': max_batt_temp_dev,
-            'airtemp': air_temp,
-            'accomp': 99, 
-            'pump': 99, 
-            # 'allerrors': 0,
-            })
-        yield f"data:{json_data}\n\n"
+        speed = np.round((speed + 0.1) % 180, 1) 
+        # rpm = (rpm+0.25) % 8
+        if counter == 0:
+            json_data = json.dumps(
+                {'speed': speed,
+                # 'rpm': rpm,
+                'ignition': ign_switch, 
+                'charging': charger_switch, 
+                # 'twelvev': 1, #gpio.input(12)
+                'avgcellvolts': cell_mean, 
+                'avgbatttemps': batt_temp_mean, 
+                'cellvoltdevmax': max_cellv_dev,
+                'batttempdevmax': max_batt_temp_dev,
+                'airtemp': air_temp,
+                'accomp': 99, 
+                'pump': 99, 
+                'pitemp': pi_temp(),
+                'piload': psutil.cpu_percent(),
+                # 'allerrors': 0,
+                })
+            yield f"data:{json_data}\n\n"
         # print(speed)
-        sleep(0.1) # update speed 
+        counter = (counter + 1) % 10
+        sleep(0.013) # update speed 
 
 #flask stuff
 @app.route('/')
