@@ -15,9 +15,9 @@
 </head>
 <body style="background:black; color:white">
 <div>
-    <div style="width: 50%; margin: 20; float:left;" id="Speedchart"></div>
-    <!-- <div id="Rpmchart"></div> -->
-    <div style="float:left; margin:20; text-align:left;" id="RawData"> </div>
+    <div style="float:left;" id="Speedchart"></div>
+    <div style="float:right;" id="kwchart"></div>
+    <div style="text-align:center; font-size:40px;" id="RawData"> </div>
 </div>
     
 <script>
@@ -25,17 +25,22 @@
     let speedConfig = {
         theme: "dark", "background-color":'black',
         type: "gauge",
-        globals: {fontSize: 25},
+        globals: {fontSize: 65},
         scale: {},'scale-2': {'size-factor':1},
         plot: {
           size: '100%',
-          valueBox: {
-          placement: 'center',
-          text: '%v', //default
+          valueBox: [{
+            placement: 'center',
+            text: '%v', //default
+            "font-color": "white",
+            fontSize: 100,
+          },
+          {
+            alpha: 0.9,
+            placement: "center",
+          text: '<br><br><br><br><br><br>mph',
           "font-color": "white",
-          fontSize: 35,
-          rules: []
-          }
+          }]
         },
         "scale-r-2": {
           aperture: 275,
@@ -52,13 +57,134 @@
           alpha: 1,
           backgroundColor: 'black',
           borderColor: 'white',
-          borderWidth: 2,
-          size: 40,
+          borderWidth: 4,
+          size: 100,
           type: 'circle',
           x: '50%',
           visible: true,
           y: '50%'
           },
+        
+          tick: {
+          alpha: 1,
+          lineColor: 'white',
+          lineStyle: 'solid',
+          lineWidth: 5,
+          placement: 'inner',
+          size: 35,
+          visible: true,
+          rules: [{
+            rule: '%i == 80',
+            lineColor: "red"
+          }]
+          },
+          minorTicks: 3,
+          minorTick: {
+          alpha: 1,
+          lineColor: 'white',
+          lineStyle: 'solid',
+          lineWidth: 3,
+          placement: 'inner',
+          size: 20,
+          visible: true
+          },
+          minorGuide: {visible: false},
+          item: {
+          'padding': 15,
+          offsetR: -225,
+          offsetX: -15,
+          offsetY: -6,
+          },
+          // labels: ['0','20', '40', '60', '80', '100', '120', '140', '160', '180'],
+          ring: {
+          alpha: '0.75',
+          size: 15,
+          // rules: [{ // uncomment for red marker btw 160 and 180
+          //   rule: '%v >= 160 && %v < 180',
+          //   backgroundColor: '#E53935',
+          //   }]
+          },
+        },
+        'scale-r':{ //gauge backlight hack
+          aperture:360,values: "0:360:360",
+          guide:{
+            items:[{
+              "fill-type":"radial",
+              backgroundColor1:"#00008b", //COLOR SCHEME
+              backgroundColor2:"black"
+            }],
+          },
+          center: {visible:false},ring: {visible:false},item: {alpha: 0},tick: {alpha: 0}
+        },
+        series: [
+          {
+            values:[0],
+            backgroundColor: 'red',
+            visible: false
+          },
+          {
+            values: [0], // starting value
+            backgroundColor: 'red',
+            indicator: [-5, -5, -1, -100,-.35],
+            scales:"scale-2, scale-r-2",
+            animation: {
+            effect: 2, 
+            method: 4,
+            sequence: 0,  
+            speed: 500
+            },
+          }]
+    };
+    let kwConfig = {
+        theme: "dark", "background-color":'black',
+        type: "gauge",
+        globals: {fontSize: 60},
+        scale: {},'scale-2': {'size-factor':1},
+        plot: {
+          size: '100%',
+          valueBox: [{
+            placement: 'center',
+            text: '%v', //default
+            "font-color": "white",
+            fontSize: 100,
+          },
+          {
+            alpha: 0.9,
+            placement: "center",
+          text: '<br><br><br><br><br><br>kWh',
+          "font-color": "white",
+          }]
+        },
+        refresh: {
+          type: "feed",
+          transport: "js",
+          url: "feed()",
+          interval: 135,
+          resetTimeout: 1000
+        },
+        "scale-r-2": {
+          aperture: 275,
+          values: "-50:270:50",
+          // markers: [{ //used for red portion of rpm
+          //   type: "area",
+          //   range: [160,180],
+          //   'offset-start':0.82,
+          //   'offset-end':0.1,
+          //   'background-color': "red",
+          //   alpha:0.7,
+          // }],
+          center: {
+          alpha: 1,
+          backgroundColor: 'black',
+          borderColor: 'white',
+          borderWidth: 4,
+          size: 100,
+          type: 'circle',
+          x: '50%',
+          visible: true,
+          y: '50%'
+          },
+        
           tick: {
           alpha: 1,
           lineColor: 'white',
@@ -84,40 +210,49 @@
           },
           minorGuide: {visible: false},
           item: {
-          'font-size':30,
           'padding': 15,
-          offsetR: -145,
+          offsetR: -225,
           rules: [{ //fiddle with this for placement of gauge nums
             rule: 'true',
-            offsetX: -10,
-            offsetY: -6
+            offsetX: -15,
+            offsetY: -6,
           // },
           // {
           //     rule: '%i == 80',
           //     offsetX: -20,
-          //     offsetY: -6
-          // },
-          // {
-              // rule: '%i == 0',
-              // offsetX: -15,
-              // offsetY: 17
+          //     offsetY: -6,
           }]
           },
           // labels: ['0','20', '40', '60', '80', '100', '120', '140', '160', '180'],
           ring: {
+          alpha: '0.5',
           size: 15,
-          // rules: [{ // uncomment for red marker btw 160 and 180
-          //   rule: '%v >= 160 && %v < 180',
-          //   backgroundColor: '#E53935',
-          //   }]
+          rules: [{ // ring color choices
+            rule: '%v >= 0',
+            // backgroundColor2: '#E53935',
+            // backgroundColor1: 'black',
+            // "fill-type":'radial',
+            fillAngle:0,
+            gradientColors: "black #E53935", //this is the red gradient
+            gradientStops: "0.1",
+            },
+            {rule: '%v < 0',
+            backgroundColor: 'white',
+            alpha:0.35,
+            
+            // fillAngle:45,
+            // gradientColors: "yellow white",
+            // gradientStops: "0.01",
+            }]
           },
         },
         'scale-r':{ //gauge backlight hack
           aperture:360,values: "0:360:360",
+          "ref-angle":240,
           guide:{
             items:[{
               "fill-type":"radial",
-              backgroundColor1:"#000050", //COLOR SCHEME
+              backgroundColor1:"#00008b", //COLOR SCHEME
               backgroundColor2:"black"
             }],
           },
@@ -132,7 +267,7 @@
           {
             values: [0], // starting value
             backgroundColor: 'red',
-            indicator: [-3, -3, -1, -100,-.3],
+            indicator: [-5, -5, -1, -100,-.35],
             scales:"scale-2, scale-r-2",
             animation: {
             effect: 2, 
@@ -143,137 +278,26 @@
           }]
     };
 
-    // var rpmConfig = {
-    //     theme: "dark",
-    //     type: "gauge",
-    //     globals: {
-    //         fontSize: 25
-    //     },
-    //     plotarea: {
-    //         marginTop: 80
-    //     },
-    //     plot: {
-    //         size: '100%',
-    //         valueBox: {
-    //         placement: 'center',
-    //         text: '%v', //default
-    //         "font-color": "white",
-    //         fontSize: 35,
-    //         rules: []
-    //         }
-    //     },
-    //     tooltip: {
-    //         borderRadius: 5
-    //     },
-
-    //     scaleR: {
-    //         aperture: 275,
-    //         values: "0:9",
-    //         // markers: [{ //used for red portion of rpm
-    //         //   type: "area",
-    //         //   range: [160,180],
-    //         //   'offset-start':0.82,
-    //         //   'offset-end':0.1,
-    //         //   'background-color': "red",
-    //         //   alpha:0.7,
-    //         // }],
-    //         center: {
-    //         alpha: .75,
-    //         backgroundColor: 'black',
-    //         borderColor: 'white',
-    //         borderWidth: 2,
-    //         size: 40,
-    //         type: 'circle',
-    //         x: '50%',
-    //         visible: true,
-    //         y: '50%'
-    //         },
-    //         tick: {
-    //         alpha: 1,
-    //         lineColor: 'white',
-    //         lineStyle: 'solid',
-    //         lineWidth: 3,
-    //         placement: 'inner',
-    //         size: 35,
-    //         visible: true,
-    //         rules: [{
-    //             rule: '%i == 80',
-    //             lineColor: "red"
-    //         }]
-    //         },
-    //         minorTicks: 3,
-    //         minorTick: {
-    //         alpha: 1,
-    //         lineColor: 'white',
-    //         lineStyle: 'solid',
-    //         lineWidth: 2,
-    //         placement: 'inner',
-    //         size: 20,
-    //         visible: true
-    //         },
-    //         minorGuide: {visible: false},
-    //         item: {
-    //         'font-size':40,
-    //         'padding': 10,
-    //         offsetR: -130,
-    //         rules: [{
-    //             // rule: '%i >= 0',
-    //             // offsetX: -10,
-    //             // offsetY: -6
-    //         // },
-    //         // {
-    //         //     rule: '%i >= 20 && %i < 80',
-    //         //     offsetX: -14,
-    //         //     offsetY: -4
-    //         // },
-    //         // {
-    //         //     rule: '%i < 20',
-    //         //     offsetX: -15,
-    //         //     offsetY: 17
-    //         }]
-    //         },
-    //         labels: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
-    //         ring: {
-    //         size: 15,
-    //         rules: [{
-    //             rule: '%v >= 8 && %v < 9',
-    //             backgroundColor: '#E53935',
-    //             }]
-    //         },
-
-    //     },
-    //     series: [{
-    //         values: [0], // starting value
-    //         backgroundColor: 'red',
-    //         indicator: [-3, -3, -1, -100,-.3],
-    //         animation: {
-    //         effect: 2, 
-    //         method: 0,
-    //         sequence: 0,
-    //         speed: 500
-    //         },
-    //     }]
-    //     };
-
     zingchart.render({
         id: 'Speedchart',
         data: speedConfig,
-        height: 720,
-        width: 600
+        height: 1070,
+        width: 1070,
     });
 
-    // zingchart.render({
-    //     id: 'RpmChart',
-    //     data: rpmConfig,
-    //     height: 600,
-    //     width: 600
-    // });
+    zingchart.render({
+        id: 'kwchart',
+        data: kwConfig,
+        height: 1070,
+        width: 1070,
+    });
         
     var source = new EventSource('/data');
     source.onmessage = function (event) {
         data = JSON.parse(event.data);
         var out = document.getElementById('RawData');
         out.innerHTML = "speed: " + data.speed + '<br>'
+        + 'kWh: ' + data.kw + '<br>'
         + 'ignition: ' + data.ignition + '<br>'
         + 'currently charging: ' + data.charging + '<br>'
         + "cell volt avg:  " + data.avgcellvolts + '<br>'
@@ -288,11 +312,11 @@
             plotindex:1,
             values: [parseInt(data.speed)]
         });
-        // update rpm gauge
-        // zingchart.exec('Rpmchart', 'setseriesvalues', {
-        //     plotindex:0,
-        //     values: [parseInt(data.rpm)]
-        // });
+        // update kw gauge
+        zingchart.exec('kwchart', 'setseriesvalues', {
+            plotindex:1,
+            values: [parseInt(data.kw)]
+        });
         
     }
 </script>

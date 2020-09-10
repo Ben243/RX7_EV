@@ -25,7 +25,7 @@ charger_switch = 1
 ac_switch = 1
 dimmer_switch = 0
 speed = 99
-rpm = 99
+kw = 99
 cell_volts = np.zeros(192) #[0 for x in range(192)] # 192, or 96*2 individual values
 batt_temps = np.zeros(16) #[0 for x in range(16)] # 16 battery temps
 # errmsg = False # arduino errors, see error declarations
@@ -81,7 +81,7 @@ def generate_values():
     # global ac_over_pressure_switch
     # global dimmer_switch
     global speed
-    # global rpm
+    global kw
     global cell_volts
     global batt_temps
     # #global errmsg
@@ -100,7 +100,8 @@ def generate_values():
     while True:
         # dummy values section, comment out before posting
         speed = np.round((speed + 0.1) % 180, 1)
-        # rpm = (rpm+0.25) % 8
+        kw =  (kw+ 1) % 500
+        # print(np.round(150 * np.sin(.02*(kw)) + 90))
         cell_volts = np.random.normal(loc=69, size=191) #dummy
         batt_temps = np.random.normal(loc=30, size=16) #dummy
 
@@ -122,7 +123,7 @@ def generate_values():
         if counter == 0:
             json_data = json.dumps(
                 {'speed': speed,
-                # 'rpm': rpm,
+                'kw': np.round(150 * np.sin(.02*kw) + 90),
                 'ignition': ign_switch, 
                 'charging': charger_switch, 
                 # 'twelvev': 1, #gpio.input(12)
@@ -140,7 +141,7 @@ def generate_values():
             yield f"data:{json_data}\n\n"
         # print(speed)
         counter = (counter + 1) % 10
-        sleep(0.0135) # update speed 
+        sleep(0.014) # update speed 
 
 #flask stuff
 @app.route('/')
