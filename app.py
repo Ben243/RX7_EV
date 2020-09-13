@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import RPi.GPIO as GPIO
 from gpiozero import LED, Button
 import subprocess
 import os, sys
 import psutil
-import threading
+from threading import Timer
 import serial
 import can
 from time import sleep
@@ -19,7 +19,20 @@ from flask import Flask, Response, render_template
 
 app = Flask(__name__) # initialize flask
 
+'''gpio'''
+def menu_press(channel):
+    global menu_button
+    menu_button = (menu_button + 1) % 5
+    # print("press! "+ str(menu_button))
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(21, GPIO.FALLING, callback=menu_press,bouncetime=200)
+# GPIO.add_event_detect(21, GPIO.FALLING, callback=menu_press,bouncetime=200)
+
 '''global variables'''
+menu_button = 1
 ign_switch = 1
 charger_switch = 1
 ac_switch = 1
@@ -70,11 +83,18 @@ def readSerial(ser):
 '''helper functions'''
 def pi_temp():
     return (float) (os.popen("vcgencmd measure_temp").readline()[5:9])
+    
+def open_browser(channel):
+    # sleep(.01)
+    os.system('DISPLAY=:0 chromium-browser --kiosk --start-fullscreen http://localhost:5000')
+    # subprocess.run("DISPLAY=:0 chromium-browser --kiosk http://localhost:5000".split())
 
 
 def generate_values():
+    # open_browser()
     '''main loop logic'''
     #global variable declaration
+    global menu_button
     global ign_switch
     global charger_switch
     global ac_switch
@@ -99,8 +119,9 @@ def generate_values():
     counter = 0
     while True:
         # dummy values section, comment out before posting
-        speed = np.round((speed + 0.1) % 180, 1)
+        speed = int(np.round((speed + 1) % 180, 1))
         kw =  (kw+ 1) % 500
+        kwbuffer = int(np.round(150 * np.sin(.02*kw) + 90))
         # print(np.round(150 * np.sin(.02*(kw)) + 90))
         cell_volts = np.random.normal(loc=69, size=191) #dummy
         batt_temps = np.random.normal(loc=30, size=16) #dummy
@@ -120,28 +141,30 @@ def generate_values():
         max_batt_temp_dev = np.round(max(np.abs(batt_temp_mean - batt_temps)), 2)
 
         
-        if counter == 0:
-            json_data = json.dumps(
-                {'speed': speed,
-                'kw': np.round(150 * np.sin(.02*kw) + 90),
-                'ignition': ign_switch, 
-                'charging': charger_switch, 
-                # 'twelvev': 1, #gpio.input(12)
-                'avgcellvolts': cell_mean, 
-                'avgbatttemps': batt_temp_mean, 
-                'cellvoltdevmax': max_cellv_dev,
-                'batttempdevmax': max_batt_temp_dev,
-                'airtemp': air_temp,
-                'accomp': 99, 
-                'pump': 99, 
-                'pitemp': pi_temp(),
-                'piload': psutil.cpu_percent(),
-                # 'allerrors': 0,
-                })
-            yield f"data:{json_data}\n\n"
+        # if counter == 0:
+        json_data = json.dumps(
+            {"menu": menu_button,
+            'speed': speed,
+            'kw': kwbuffer,
+            'ignition': ign_switch, 
+            'charging': charger_switch, 
+            # 'twelvev': 1, #gpio.input(12)
+            'avgcellvolts': cell_mean, 
+            'avgbatttemps': batt_temp_mean, 
+            'cellvoltdevmax': max_cellv_dev,
+            'batttempdevmax': max_batt_temp_dev,
+            'airtemp': air_temp,
+            'accomp': 99, 
+            'pump': 99, 
+            'pitemp': int(pi_temp()),
+            'piload': float(psutil.cpu_percent()),
+            # 'allerrors': 0,
+            })
+        yield f"data:{json_data}\n\n"
         # print(speed)
-        counter = (counter + 1) % 10
-        sleep(0.014) # update speed 
+        # counter = (counter + 1) % 10
+        sleep(0.15) # multiply by 10 to send message
+
 
 #flask stuff
 @app.route('/')
@@ -153,4 +176,5 @@ def data():
     return Response(generate_values(), mimetype='text/event-stream')
     
 if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+    # Timer(0.1, open_browser).starst()
+    app.run(debug=False, threaded=True)

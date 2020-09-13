@@ -1,12 +1,8 @@
 #! /bin/sh
 
 set -e
-
+# uhh TODO unfinished install module, do not use
 echo "=> Starting gpio executer...\n"
-sudo cp execute_gpio.sh /etc/init.d/
-sudo chmod +x /etc/init.d/execute_gpio.sh
-
-sudo update-rc.d execute_gpio.sh defaults
-sudo /etc/init.d/execute_gpio.sh start
+sudo chmod /home/pi/RX7_EV/app.py
 
 echo "Shutdown listener installed.

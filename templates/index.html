@@ -17,7 +17,7 @@
 <div>
     <div style="float:left;" id="Speedchart"></div>
     <div style="float:right;" id="kwchart"></div>
-    <div style="text-align:center; font-size:40px;" id="RawData"> </div>
+    <div style="text-align:center; font-size:40px;vertical-align: middle;" id="RawData"> </div>
 </div>
     
 <script>
@@ -296,17 +296,18 @@
     source.onmessage = function (event) {
         data = JSON.parse(event.data);
         var out = document.getElementById('RawData');
-        out.innerHTML = "speed: " + data.speed + '<br>'
-        + 'kWh: ' + data.kw + '<br>'
-        + 'ignition: ' + data.ignition + '<br>'
-        + 'currently charging: ' + data.charging + '<br>'
-        + "cell volt avg:  " + data.avgcellvolts + '<br>'
-        + 'cell volt max deviation: ' + data.cellvoltdevmax + '<br>'
-        + 'batt temp avg: ' + data.avgbatttemps + '<br>'
-        + 'batt temp max deviation: ' + data.batttempdevmax + '<br>'
-        + 'pi temp: ' + data.pitemp + ' &deg;C <br>'
-        + 'pi CPU: ' + parseFloat(data.piload) + '%'
-        + '<br>';
+        out.innerHTML = data.menu
+          // out.innerHTML = "speed: " + data.speed + '<br>'
+          // + 'kWh: ' + data.kw + '<br>'
+          // + 'ignition: ' + data.ignition + '<br>'
+          // + 'currently charging: ' + data.charging + '<br>'
+          // + "cell volt avg:  " + data.avgcellvolts + '<br>'
+          // + 'cell volt max deviation: ' + data.cellvoltdevmax + '<br>'
+          // + 'batt temp avg: ' + data.avgbatttemps + '<br>'
+          // + 'batt temp max deviation: ' + data.batttempdevmax + '<br>'
+          // + 'pi temp: ' + data.pitemp + ' &deg;C <br>'
+          // + 'pi CPU: ' + parseFloat(data.piload) + '%'
+          // + '<br>';
         // update speed gauge
         zingchart.exec('Speedchart', 'setseriesvalues', {
             plotindex:1,
