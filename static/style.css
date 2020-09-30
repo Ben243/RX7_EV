@@ -1,0 +1,48 @@
+.body{
+    background: black;
+    color: white;
+  }
+#bms-indicator {
+    position: absolute;
+    bottom: 4%;
+    right: 45%;
+    transform: translate(-50%,-50%);
+    font-size: 65px;
+    color: white;
+}
+
+.battery-icon {
+    position: absolute;
+    width: 200px;
+    height: 60px;
+    border-radius: 10px;
+    border: 5px solid #FFF;
+    bottom: 4%;
+    left: 45%;
+    transform: translate(-50%,-50%);
+    --powerlevel: 100%;
+    --powercolor: white;
+  }
+  
+  .battery-icon:after {
+      content: '';
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 15px;
+      height: 30px;
+      border-radius: 5px;
+      background: #fffefe;
+  }
+  
+  .battery-icon:before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    width: var(--powerlevel);
+    height: 52px;
+    background-color: var(--powercolor);
+    border-radius: 5px;
+  }

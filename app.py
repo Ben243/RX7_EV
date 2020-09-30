@@ -20,6 +20,9 @@ from flask import Flask, Response, render_template
 app = Flask(__name__) # initialize flask
 
 '''gpio'''
+def kill(channel):
+    app.do_teardown_appcontext()
+    
 def menu_press(channel):
     global menu_button
     menu_button = (menu_button + 1) % 5
@@ -27,9 +30,9 @@ def menu_press(channel):
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-# GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(21, GPIO.FALLING, callback=menu_press,bouncetime=200)
-# GPIO.add_event_detect(21, GPIO.FALLING, callback=menu_press,bouncetime=200)
+GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(21, GPIO.FALLING, callback=menu_press,bouncetime=200) # gpio for toggling 
+GPIO.add_event_detect(13, GPIO.FALLING, callback=kill,bouncetime=200) # gpio for killing flask
 
 '''global variables'''
 menu_button = 1
@@ -38,7 +41,8 @@ charger_switch = 1
 ac_switch = 1
 dimmer_switch = 0
 speed = 99
-kw = 99
+motorvolts = 99
+bms_volts = 99
 cell_volts = np.zeros(192) #[0 for x in range(192)] # 192, or 96*2 individual values
 batt_temps = np.zeros(16) #[0 for x in range(16)] # 16 battery temps
 # errmsg = False # arduino errors, see error declarations
@@ -84,9 +88,31 @@ def readSerial(ser):
 def pi_temp():
     return (float) (os.popen("vcgencmd measure_temp").readline()[5:9])
     
+def batt_perc(value):
+    if (value <= 3.4):
+        return 1
+    elif (value <= 3.6):
+        return 5
+    elif (value <= 3.85):
+        return 15
+    elif (value <= 3.9):
+        return 30
+    elif (value <= 3.95):
+        return 40
+    elif (value <= 4):
+        return 50
+    elif (value <= 4.05):
+        return 65
+    elif (value <= 4.1):
+        return 85
+    elif (value <= 4.15):
+        return 91
+    else: return 96
+
+
 def open_browser(channel):
     # sleep(.01)
-    os.system('DISPLAY=:0 chromium-browser --kiosk --start-fullscreen http://localhost:5000')
+    os.system('DISPLAY=:0 chromium-browser --kiosk --start-fullscreen --disable-infobars http://localhost:5000')
     # subprocess.run("DISPLAY=:0 chromium-browser --kiosk http://localhost:5000".split())
 
 
@@ -101,7 +127,8 @@ def generate_values():
     # global ac_over_pressure_switch
     # global dimmer_switch
     global speed
-    global kw
+    global motorvolts
+    global bms_volts
     global cell_volts
     global batt_temps
     # #global errmsg
@@ -120,15 +147,16 @@ def generate_values():
     while True:
         # dummy values section, comment out before posting
         speed = int(np.round((speed + 1) % 180, 1))
-        kw =  (kw+ 1) % 500
-        kwbuffer = int(np.round(150 * np.sin(.02*kw) + 90))
-        # print(np.round(150 * np.sin(.02*(kw)) + 90))
-        cell_volts = np.random.normal(loc=69, size=191) #dummy
+        motorvolts =  (motorvolts + 1) % 500
+        motorvoltsbuffer = int(np.round(150 * np.sin(.02*motorvolts) + 90))
+        bms_volts = [3, 3.1, 3.5, 3.6, 3.8, 3.9, 3.97, 4.00, 4.10, 4.2]
+        # print(np.round(150 * np.sin(.02*(motorvolts)) + 90))
+        cell_volts = np.random.normal(loc=3.6, size=191) #dummy
         batt_temps = np.random.normal(loc=30, size=16) #dummy
 
         # true input section
         # usb0_data = readSerial(usb0) #from usb0
-        # input format is speed rpm ignition charging ac_on ac_pressure dimmer cellvolt_avg batttemp_avg 
+        # input format is speed ignition charging ac_on ac_pressure dimmer cellvolt_avg batttemp_avg 
         # cell_volts = np.array(usb0_data[0:191]) # update cellvolts
         # batt_temps = np.array(usb0_data[192:208]) # update batttemps
         # air_temp = usb0_data[210] #check airtemp
@@ -145,10 +173,12 @@ def generate_values():
         json_data = json.dumps(
             {"menu": menu_button,
             'speed': speed,
-            'kw': kwbuffer,
+            'motorvolts': motorvoltsbuffer,
             'ignition': ign_switch, 
             'charging': charger_switch, 
             # 'twelvev': 1, #gpio.input(12)
+            'bms_volts': bms_volts[counter],
+            'vperc': batt_perc(bms_volts[counter]),
             'avgcellvolts': cell_mean, 
             'avgbatttemps': batt_temp_mean, 
             'cellvoltdevmax': max_cellv_dev,
@@ -157,12 +187,12 @@ def generate_values():
             'accomp': 99, 
             'pump': 99, 
             'pitemp': int(pi_temp()),
-            'piload': float(psutil.cpu_percent()),
+            'piload': psutil.cpu_percent(),
             # 'allerrors': 0,
             })
         yield f"data:{json_data}\n\n"
         # print(speed)
-        # counter = (counter + 1) % 10
+        counter = (counter + 1) % 10
         sleep(0.15) # multiply by 10 to send message
 
 

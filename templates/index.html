@@ -11,15 +11,21 @@
         import './zingchart/modules-es6/zingchart-pareto.min.js';
     </script> -->
     <script src="static/zingchart.min.js"></script> 
-    <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body style="background:black; color:white">
-<div>
-    <div style="float:left;" id="Speedchart"></div>
-    <div style="float:right;" id="kwchart"></div>
-    <div style="text-align:center; font-size:40px;vertical-align: middle;" id="RawData"> </div>
-</div>
-    
+<body style="background-color: black; color: white; font-family: Arial, Helvetica, sans-serif;">
+  <div style="float:left;" id="Speedchart"></div>
+  <div style="float:right;" id="kwchart"></div>
+  <div style="vertical-align: middle">
+    <div style="text-align:center; font-size:40px;" id="RawData"></div> 
+    <div class="battery-icon" id='battery-icon'></div>
+    <div id='lightning-icon' style='text-align:center;'>
+      <svg transform="translate(-63,503)" width="240" height="240" viewBox="0 0 100 100" stroke=black><g/><path fill="white" d="M17.927 12l2.68-10.28c0.040-0.126 0.060-0.261 0.060-0.4 0-0.726-0.587-1.32-1.314-1.32-0.413 0-0.78 0.187-1.019 0.487l-13.38 17.353c-0.18 0.227-0.287 0.513-0.287 0.827 0 0.733 0.6 1.333 1.333 1.333h8.073l-2.68 10.28c-0.041 0.127-0.060 0.261-0.060 0.4 0.001 0.727 0.587 1.32 1.314 1.32 0.413 0 0.78-0.186 1.020-0.487l13.379-17.353c0.181-0.227 0.287-0.513 0.287-0.827 0-0.733-0.6-1.333-1.333-1.333h-8.073z"/></svg>
+    </div>
+    <div style="text-align: left; font-size: 85px; position: fixed; bottom: 2%; right: 38%;" id="bms-indicator"></div>
+  </div>
+</body>
+   
 <script>
     var data = null
     let speedConfig = {
@@ -151,7 +157,7 @@
           {
             alpha: 0.9,
             placement: "center",
-          text: '<br><br><br><br><br><br>kWh',
+          text: '<br><br><br><br><br><br>kW',
           "font-color": "white",
           }]
         },
@@ -296,18 +302,28 @@
     source.onmessage = function (event) {
         data = JSON.parse(event.data);
         var out = document.getElementById('RawData');
-        out.innerHTML = data.menu
-          // out.innerHTML = "speed: " + data.speed + '<br>'
-          // + 'kWh: ' + data.kw + '<br>'
-          // + 'ignition: ' + data.ignition + '<br>'
-          // + 'currently charging: ' + data.charging + '<br>'
-          // + "cell volt avg:  " + data.avgcellvolts + '<br>'
-          // + 'cell volt max deviation: ' + data.cellvoltdevmax + '<br>'
-          // + 'batt temp avg: ' + data.avgbatttemps + '<br>'
-          // + 'batt temp max deviation: ' + data.batttempdevmax + '<br>'
-          // + 'pi temp: ' + data.pitemp + ' &deg;C <br>'
-          // + 'pi CPU: ' + parseFloat(data.piload) + '%'
-          // + '<br>';
+        var batt = document.getElementById('battery-icon');
+        var bmsi = document.getElementById('bms-indicator');
+        out.innerHTML = data.menu + '<br>'
+          + 'ignition: ' + data.ignition + '<br>'
+          + 'currently charging: ' + data.charging + '<br>'
+          + "cell volt avg:  " + data.avgcellvolts + '<br>'
+          + 'cell volt max deviation: ' + data.cellvoltdevmax + '<br>'
+          + 'batt temp avg: ' + data.avgbatttemps + '<br>'
+          + 'batt temp max deviation: ' + data.batttempdevmax + '<br>'
+          + 'pi temp: ' + data.pitemp + ' &deg;C <br>'
+          + 'pi CPU: ' + parseFloat(data.piload) + '%'
+          + '<br>';
+
+        //update battery gauge
+        batt.style.setProperty('--powerlevel', data.vperc + '%');
+        if (data.vperc <= 10) {
+          batt.style.setProperty('--powercolor', 'red');
+        } else {
+          batt.style.setProperty('--powercolor', 'white');
+        } 
+        //bms indicatpr
+        bmsi.innerHTML = data.bms_volts.toFixed(2) + " V"
         // update speed gauge
         zingchart.exec('Speedchart', 'setseriesvalues', {
             plotindex:1,
@@ -316,7 +332,7 @@
         // update kw gauge
         zingchart.exec('kwchart', 'setseriesvalues', {
             plotindex:1,
-            values: [parseInt(data.kw)]
+            values: [parseInt(data.motorvolts)]
         });
         
     }
