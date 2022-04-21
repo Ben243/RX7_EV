@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-import RPi.GPIO as GPIO
-from gpiozero import LED, Button
+# import RPi.GPIO as GPIO
+# from gpiozero import LED, Button
 import subprocess
 import os, sys
-import psutil
+# import psutil
 from threading import Timer
-import serial
-import can
+# import serial
+# import can
 from time import sleep
 import numpy as np
 
@@ -19,20 +19,20 @@ from flask import Flask, Response, render_template
 
 app = Flask(__name__) # initialize flask
 
-'''gpio'''
-def kill(channel):
-    app.do_teardown_appcontext()
+# '''gpio'''
+# def kill(channel):
+#     app.do_teardown_appcontext()
     
-def menu_press(channel):
-    global menu_button
-    menu_button = (menu_button + 1) % 5
+# def menu_press(channel):
+#     global menu_button
+#     menu_button = (menu_button + 1) % 5
     # print("press! "+ str(menu_button))
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(21, GPIO.FALLING, callback=menu_press,bouncetime=200) # gpio for toggling 
-GPIO.add_event_detect(13, GPIO.FALLING, callback=kill,bouncetime=200) # gpio for killing flask
+# GPIO.setmode(GPIO.BCM)
+# GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# GPIO.setup(13, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+# GPIO.add_event_detect(21, GPIO.FALLING, callback=menu_press,bouncetime=200) # gpio for toggling 
+# GPIO.add_event_detect(13, GPIO.FALLING, callback=kill,bouncetime=200) # gpio for killing flask
 
 '''global variables'''
 menu_button = 1
@@ -58,10 +58,10 @@ SERIAL INITIALIZATION
 '''
 # inputs separated by spaces:
 # cell volts, lv battery voltage, cell temps, errmsg airtemp
-usb0 = serial.Serial() # usb serial input 1
-usb0.baudrate = 19200
-usb0.port = '/dev/ttyUSB0'
-usb0.timeout = 1
+# usb0 = serial.Serial() # usb serial input 1
+# usb0.baudrate = 19200
+# usb0.port = '/dev/ttyUSB0'
+# usb0.timeout = 1
 # usb1 = serial.Serial('/dev/ttyUSB1', 9600, timeout=1) 
 # ser = serial.Serial("/dev/ttyS0",115200,timeout=1)
 
@@ -86,7 +86,8 @@ def readSerial(ser):
 
 '''helper functions'''
 def pi_temp():
-    return (float) (os.popen("vcgencmd measure_temp").readline()[5:9])
+    # return (float) (os.popen("vcgencmd measure_temp").readline()[5:9])
+    return 59.0
     
 def batt_perc(value):
     if (value <= 3.4):
@@ -187,7 +188,8 @@ def generate_values():
             'accomp': 99, 
             'pump': 99, 
             'pitemp': int(pi_temp()),
-            'piload': psutil.cpu_percent(),
+            # 'piload': psutil.cpu_percent(),
+            'piload': .99,
             # 'allerrors': 0,
             })
         yield f"data:{json_data}\n\n"
